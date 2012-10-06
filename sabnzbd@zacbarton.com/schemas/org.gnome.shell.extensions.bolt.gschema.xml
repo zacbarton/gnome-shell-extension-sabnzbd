@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist gettext-domain="gnome-shell-extensions">
+	<schema path="/org/gnome/shell/extensions/sabnzbd/" id="org.gnome.shell.extensions.sabnzbd">
+		<key type="s" name="url">
+			<default>'http://localhost:8000'</default>
+			<summary>URL to your SABnzbd install</summary>
+			<description></description>
+		</key>
+		<key type="s" name="username">
+			<default>''</default>
+			<summary>Username of your SABnzbd server (blank for none)</summary>
+			<description></description>
+		</key>
+		<key type="s" name="password">
+			<default>''</default>
+			<summary>Password of your SABnzbd server (blank for none)</summary>
+			<description></description>
+		</key>
+		<key type="s" name="apikey">
+			<default>''</default>
+			<summary>SABnzbd Config -&gt; General -&gt; API Key</summary>
+			<description></description>
+		</key>
+		<key type="b" name="show-speed">
+			<default>true</default>
+			<summary>Show speed next to the indicator</summary>
+			<description></description>
+		</key>
+	</schema>
+</schemalist>

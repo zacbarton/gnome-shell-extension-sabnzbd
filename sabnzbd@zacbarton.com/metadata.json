@@ -1,0 +1,9 @@
+{
+	"description": "Control and monitor SABnzbd"
+	, "name": "SABnzbd"
+	, "shell-version": ["3.6"]
+	, "settings-schema": "org.gnome.shell.extensions.sabnzbd"
+	, "url": "https://github.com/zacbarton/gnome-shell-extension-sabnzbd"
+	, "uuid": "sabnzbd@zacbarton.com"
+	, "version": 1
+}

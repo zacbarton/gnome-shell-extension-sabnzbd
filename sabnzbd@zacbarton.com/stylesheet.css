@@ -1,0 +1,9 @@
+.queue-item, .history-item {
+	padding-left: 3em;
+}
+
+.indicator-label {
+	font-size: 70%;
+	padding-left: 6px;
+	padding-top: 2px;
+}
