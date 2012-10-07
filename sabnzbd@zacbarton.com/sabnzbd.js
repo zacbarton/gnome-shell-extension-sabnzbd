@@ -10,6 +10,8 @@ const Clutter = imports.gi.Clutter;
 const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
 
+const GLib = imports.gi.GLib;
+
 const Extension = imports.misc.extensionUtils.getCurrentExtension();
 const Settings = Extension.imports.settings;
 
@@ -149,7 +151,7 @@ const SABnzbd = new Lang.Class({
 	},
 	
 	openWebInterface: function() {
-		Util.spawnCommandLine("xdg-open " + this.settings.get_string(Settings.URL));
+		Gio.AppInfo.launch_default_for_uri(this.settings.get_string(Settings.URL), global.create_app_launch_context());
 	},
 	
 	openPrefs: function() {
@@ -179,7 +181,7 @@ const SABnzbd = new Lang.Class({
 			let message = Soup.Message.new("GET", url.join("&"));
 			
 			this.transport.queue_message(message, Lang.bind(this, function(session, message) {
-				let data = JSON.parse(message.response_body.data);
+				let data = JSON.parse(message.response_body.data) || {error: "Unable to connect"};
 				
 				this.removeMenuItems("queue-item");
 				
@@ -191,7 +193,18 @@ const SABnzbd = new Lang.Class({
 					if (!this.pauseSwitch.state) {
 						this.updateDelay = 1000 * 1.5; // used to keep in sync with web interface changes
 						
-						this.indicatorLabel.text = "%s/s".format(this.readableSize(data.queue.kbpersec * 1024));
+						let speed = data.queue.kbpersec;
+						
+						if (speed < 1) {
+							speed = "0 KB/s"; // we dont want to show B/s values
+						} else {
+							speed = "%s/s".format(GLib.format_size(data.queue.kbpersec * 1000).toUpperCase()); // force kB -> KB to match the web ui
+							
+							// drop the decimals for values like 45.5 KB but not for 1.9 MB
+							speed = speed.replace(/(\d+)\.\d (KB)/, "$1 $2");
+						}
+						
+						this.indicatorLabel.text = speed; 
 						this.indicatorIconMakeGrayscale(false);
 					} else {
 						this.updateDelay = 1000 * 30; // used to keep in sync with web interface changes
@@ -237,7 +250,7 @@ const SABnzbd = new Lang.Class({
 			let message = Soup.Message.new("GET", url.join("&"));
 			
 			this.transport.queue_message(message, Lang.bind(this, function(session, message) {
-				let data = JSON.parse(message.response_body.data);
+				let data = JSON.parse(message.response_body.data) || {error: "Unable to connect"};
 				
 				this.removeMenuItems("history-item");
 				
@@ -289,30 +302,5 @@ const SABnzbd = new Lang.Class({
 				children[i]._delegate.destroy();
 			}
 		}
-	},
-	
-	// from https://github.com/eonpatapon/gnome-shell-extension-transmission-daemon/blob/master/transmission-daemon%40patapon.info/extension.js#L1254
-	readableSize: function(size) {
-		if (!size)
-			size = 0;
-		
-		let units = ['B', 'KB', 'MB', 'GB'];
-		let i = 0;
-		
-		while (size >= 1000) {
-			size /= 1000;
-			++i;
-		}
-		
-		let n = i;
-		if (n > 0 && size > 0)
-			n--;
-		
-		// hack: never show B
-		if (size === 0 && i === 0) {
-			i = 1;
-		}
-		
-		return "%s %s".format(size.toFixed(n), units[i]);
 	}
 });
