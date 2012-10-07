@@ -1,6 +1,7 @@
 const St = imports.gi.St;
 const Lang = imports.lang;
 const Gio = imports.gi.Gio;
+const GLib = imports.gi.GLib;
 const Soup = imports.gi.Soup;
 const Main = imports.ui.main;
 const Util = imports.misc.util;
@@ -9,8 +10,6 @@ const Mainloop = imports.mainloop;
 const Clutter = imports.gi.Clutter;
 const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
-
-const GLib = imports.gi.GLib;
 
 const Extension = imports.misc.extensionUtils.getCurrentExtension();
 const Settings = Extension.imports.settings;
