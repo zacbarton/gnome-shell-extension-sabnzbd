@@ -14,11 +14,18 @@ const PopupMenu = imports.ui.popupMenu;
 const Extension = imports.misc.extensionUtils.getCurrentExtension();
 const Settings = Extension.imports.settings;
 
+let statusArea = null;
+
 const SABnzbd = new Lang.Class({
 	Name: "SABnzbd",
 	Extends: PanelMenu.Button,
 
 	_init: function() {
+		if (Main.panel.statusArea !== undefined) {
+			statusArea = Main.panel.statusArea;
+		} else {
+			statusArea = Main.panel._statusArea;
+		}
 		this.settings = Settings.getSettings();
 		
 		this.parent(0.0, "SABnzbd");
@@ -34,8 +41,8 @@ const SABnzbd = new Lang.Class({
 		
 		// ensure we are always on the far left
 		let enableTimeout = Mainloop.timeout_add(500, Lang.bind(this, function() {
-			if (Main.panel.statusArea["SABnzbd"]) {
-				Main.panel._rightBox.insert_child_at_index(this.container, 0);
+			if (statusArea["SABnzbd"]) {
+				Main.panel._rightBox.insert_child_at_index(this.actor, 0);
 			} else {
 				Main.panel.addToStatusArea("SABnzbd", this, 0);	
 			}
@@ -53,8 +60,8 @@ const SABnzbd = new Lang.Class({
 			Mainloop.source_remove(this.historyTimeout);
 		}
 		
-		Main.panel._rightBox.remove_actor(this.container);
-		delete Main.panel.statusArea["SABnzbd"];
+		Main.panel._rightBox.remove_child(this.actor);
+		delete statusArea["SABnzbd"];
 	},
 	
 	setupTransport: function() {
